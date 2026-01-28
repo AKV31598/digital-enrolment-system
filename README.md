@@ -1,6 +1,6 @@
 # Digital Enrolment System
 
-A full-stack HR Benefits Policy Management application built with TypeScript, tRPC, React, and SQLite.
+A full-stack Policy Management application built with TypeScript, tRPC, React, and SQLite.
 
 ## 🎯 Overview
 
@@ -182,8 +182,6 @@ User (id, username, password, role, firstName, lastName, email)
 This project is for demonstration purposes.
 
 ---
-
-Built with ❤️ for PrishaPolicy) |
 
 ## 📋 Features
 
