@@ -352,9 +352,7 @@ digital-enrolment-system/
 - API routes are protected by role-based middleware
 - Employees cannot delete dependents (enforced server-side)
 
-## 📝 License
 
-MIT License - Built for PrishaPolicy assessment) |
 
 ## 📦 Quick Start
 
@@ -600,4 +598,4 @@ EMP001,John,Doe,john@company.com,+91 98765 43210,1990-05-15,Male,Engineering,Sof
 
 ## 📄 License
 
-This project was created as a technical assessment for PrishaPolicy.
+This project was created by Ayush Kumar Vishwakarma.
