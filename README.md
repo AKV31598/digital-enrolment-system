@@ -501,9 +501,9 @@ digital-enrolment-system/
 - **Health Check**: http://localhost:3000/api/health
 - **CSV Template**: http://localhost:3000/api/download/csv-template
 
-## 📝 License
 
-MIT) |
+
+
 
 ## 📋 Features
 
@@ -596,6 +596,6 @@ EMP001,John,Doe,john@company.com,+91 98765 43210,1990-05-15,Male,Engineering,Sof
 
 **Required columns**: Employee Code, First Name, Last Name, Email
 
-## 📄 License
+## 📄 
 
 This project was created by Ayush Kumar Vishwakarma.
