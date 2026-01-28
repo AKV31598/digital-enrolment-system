@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- 
+      =========================================================================
+      Digital Enrolment System - HTML Entry Point
+      =========================================================================
+      
+      This is the single HTML file that serves as the entry point for our
+      React Single Page Application (SPA).
+      
+      How it works:
+      1. Browser loads this HTML file
+      2. Vite injects the React app bundle via the script tag
+      3. React takes over and renders the entire UI inside #root
+      4. All navigation happens client-side (React Router)
+      
+      The actual content is rendered by React - this file is just a shell.
+      =========================================================================
+    -->
+    
+    <!-- Page Title -->
+    <title>Digital Enrolment System | PrishaPolicy</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>" />
+    
+    <!-- Google Fonts - Inter (our primary font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Meta tags for SEO and social sharing -->
+    <meta name="description" content="HR Benefits Policy Management System - Manage employees and dependents under group insurance policies" />
+    <meta name="theme-color" content="#1E2A4A" />
+  </head>
+  <body>
+    <!-- 
+      Root Element
+      ============
+      React will mount the entire application inside this div.
+      Everything you see in the app is rendered by React here.
+    -->
+    <div id="root"></div>
+    
+    <!-- 
+      Loading Fallback
+      ================
+      This shows while React is loading (before JavaScript executes).
+      It's immediately replaced once React mounts.
+    -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: system-ui;">
+        <h1>JavaScript Required</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser.</p>
+      </div>
+    </noscript>
+    
+    <!-- 
+      Main Script
+      ===========
+      Vite will replace this with the bundled React application.
+      In development, this enables Hot Module Replacement (HMR).
+      In production, this loads the optimized bundle.
+    -->
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

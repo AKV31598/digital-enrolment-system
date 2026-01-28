@@ -1,0 +1,100 @@
+{
+  /*
+   * ============================================================================
+   * TYPESCRIPT CONFIGURATION - Digital Enrolment System
+   * ============================================================================
+   * 
+   * This is the main TypeScript configuration file that sets up the compiler
+   * options for our full-stack application. We use a shared configuration
+   * approach where both client and server code share common settings.
+   * 
+   * Key decisions:
+   * - "module": "ESNext" - We use ES modules throughout for consistency
+   * - "strict": true - Enables all strict type-checking options
+   * - "skipLibCheck": true - Speeds up compilation by skipping .d.ts checks
+   * ============================================================================
+   */
+  "compilerOptions": {
+    /* ========== Language & Environment ========== */
+    // Target modern JavaScript for better performance
+    "target": "ES2022",
+    
+    // Use ES modules (import/export syntax)
+    "module": "ESNext",
+    
+    // Use bundler-style module resolution (works with Vite)
+    "moduleResolution": "bundler",
+    
+    // Allow importing JSON files directly
+    "resolveJsonModule": true,
+    
+    // Support JSX for React components
+    "jsx": "react-jsx",
+    
+    /* ========== Strict Type Checking ========== */
+    // Enable all strict type-checking options
+    "strict": true,
+    
+    // Ensure consistent casing in imports (important for cross-platform)
+    "forceConsistentCasingInFileNames": true,
+    
+    // Report errors for unused local variables
+    "noUnusedLocals": true,
+    
+    // Report errors for unused function parameters
+    "noUnusedParameters": true,
+    
+    // Ensure all code paths return a value in functions
+    "noImplicitReturns": true,
+    
+    /* ========== Module Interop ========== */
+    // Allow default imports from modules with no default export
+    "esModuleInterop": true,
+    
+    // Allow importing CommonJS modules as ES modules
+    "allowSyntheticDefaultImports": true,
+    
+    // Emit design-type metadata for decorators (needed for some ORMs)
+    "emitDecoratorMetadata": true,
+    
+    // Enable experimental decorators
+    "experimentalDecorators": true,
+    
+    /* ========== Path Aliases ========== */
+    // Set base URL for path resolution
+    "baseUrl": ".",
+    
+    // Define path aliases for cleaner imports
+    // Instead of: import { User } from '../../../shared/types'
+    // We can use: import { User } from '@shared/types'
+    "paths": {
+      "@server/*": ["src/server/*"],
+      "@client/*": ["src/client/*"],
+      "@shared/*": ["src/shared/*"]
+    },
+    
+    /* ========== Output & Build ========== */
+    // Skip type checking of declaration files for faster builds
+    "skipLibCheck": true,
+    
+    // Don't emit output (Vite handles client, tsx handles server)
+    "noEmit": true,
+    
+    // Ensure imports are isolated (each file is a module)
+    "isolatedModules": true
+  },
+  
+  /* ========== Files to Include ========== */
+  "include": [
+    "src/**/*",           // All source files
+    "prisma/**/*"         // Prisma schema and seed files
+  ],
+  
+  /* ========== Files to Exclude ========== */
+  "exclude": [
+    "node_modules",       // Dependencies
+    "dist",               // Build output
+    "*.config.js",        // Config files
+    "*.config.ts"         // Config files
+  ]
+}

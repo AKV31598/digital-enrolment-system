@@ -1,0 +1,227 @@
+// ============================================================================
+// PRISMA SCHEMA - Digital Enrolment System Database
+// ============================================================================
+// 
+// Prisma is our ORM (Object-Relational Mapping) that provides:
+// - Type-safe database queries
+// - Auto-generated TypeScript types
+// - Database migrations
+// - A visual database browser (Prisma Studio)
+// 
+// This schema defines all our database tables (models), their fields,
+// relationships, and constraints.
+// 
+// Database: SQLite (easy to set up, no external database needed)
+// Location: ./prisma/dev.db
+// ============================================================================
+
+// ========== Generator Configuration ==========
+// Tells Prisma to generate a TypeScript client for database access
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ========== Database Configuration ==========
+// We use SQLite for simplicity - it's a file-based database
+// For production, you might switch to PostgreSQL or MySQL
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============================================================================
+// USER MODEL
+// ============================================================================
+// Represents all users in the system (both HR Managers and Employees).
+// This handles authentication and role-based access control.
+// 
+// Key Points:
+// - 'role' determines what the user can do in the system
+// - Password is stored as a bcrypt hash (never plain text!)
+// - HR users don't have an associated Employee record
+// - Employee users have a one-to-one link to an Employee record
+// ============================================================================
+model User {
+  // ========== Primary Key ==========
+  // Auto-incrementing unique identifier
+  id        Int      @id @default(autoincrement())
+  
+  // ========== Authentication Fields ==========
+  // Username must be unique - used for login
+  username  String   @unique
+  
+  // Password hash (NEVER store plain text passwords!)
+  // We use bcrypt with salt rounds for secure hashing
+  password  String
+  
+  // ========== Profile Fields ==========
+  firstName String
+  lastName  String
+  email     String
+  
+  // ========== Role-Based Access Control ==========
+  // Determines user permissions:
+  // - "HR_MANAGER": Full CRUD access to all employees and dependents
+  // - "EMPLOYEE": Limited access (own dependents only, no delete)
+  role      String   @default("EMPLOYEE")
+  
+  // ========== Timestamps ==========
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // ========== Relations ==========
+  // If this user is an employee, link to their Employee record
+  // This is optional because HR Managers don't have Employee records
+  employee  Employee?
+  
+  // Insurance policies managed by this HR user
+  // Only populated for HR_MANAGER role users
+  managedPolicies InsurancePolicy[]
+  
+  // Track which dependents this user created
+  // Useful for auditing who added family members
+  createdMembers Member[]
+}
+
+// ============================================================================
+// INSURANCE POLICY MODEL
+// ============================================================================
+// Represents a group insurance policy that a company has purchased.
+// Each policy:
+// - Is managed by an HR Manager
+// - Contains multiple employees
+// - Has a unique policy number
+// 
+// In the real world, this would connect to an insurance provider's system.
+// ============================================================================
+model InsurancePolicy {
+  // ========== Primary Key ==========
+  id           Int      @id @default(autoincrement())
+  
+  // ========== Policy Details ==========
+  // Unique identifier from the insurance provider
+  policyNumber String   @unique
+  
+  // Human-readable name for the policy
+  policyName   String
+  
+  // The company that purchased this policy
+  companyName  String
+  
+  // ========== Timestamps ==========
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // ========== Relations ==========
+  // The HR Manager responsible for this policy
+  hrManagerId  Int
+  hrManager    User     @relation(fields: [hrManagerId], references: [id])
+  
+  // All employees covered under this policy
+  employees    Employee[]
+}
+
+// ============================================================================
+// EMPLOYEE MODEL
+// ============================================================================
+// Represents an employee enrolled in an insurance policy.
+// 
+// Key Points:
+// - Each employee belongs to exactly one insurance policy
+// - Each employee can have multiple dependents (family members)
+// - Employee may or may not have a User account for system login
+// - When deleted, all dependents are automatically deleted (cascade)
+// 
+// The employeeCode is unique within a policy but not globally,
+// so two policies can have employees with the same code.
+// ============================================================================
+model Employee {
+  // ========== Primary Key ==========
+  id           Int      @id @default(autoincrement())
+  
+  // ========== Employee Identification ==========
+  // Company-specific employee code (e.g., "EMP001", "A12345")
+  // Must be unique within the same policy
+  employeeCode String
+  
+  // ========== Personal Information ==========
+  firstName    String
+  lastName     String
+  email        String
+  phone        String?          // Optional - some employees may not provide
+  dateOfBirth  DateTime?        // Optional - for insurance calculations
+  gender       String?          // Optional - "Male", "Female", "Other"
+  
+  // ========== Employment Information ==========
+  department   String?          // e.g., "Engineering", "Sales", "HR"
+  designation  String?          // e.g., "Software Engineer", "Manager"
+  
+  // ========== Timestamps ==========
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // ========== Relations ==========
+  // The insurance policy this employee belongs to
+  policyId     Int
+  policy       InsurancePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  
+  // Optional link to a User account (for employees who can log in)
+  // If null, this employee cannot access the system
+  userId       Int?     @unique
+  user         User?    @relation(fields: [userId], references: [id])
+  
+  // Family members (dependents) covered under this employee's benefits
+  // onDelete: Cascade means deleting employee also deletes all their dependents
+  members      Member[]
+  
+  // ========== Unique Constraint ==========
+  // Employee code must be unique within each policy
+  // Example: Policy A can have "EMP001" and Policy B can also have "EMP001"
+  @@unique([policyId, employeeCode])
+}
+
+// ============================================================================
+// MEMBER MODEL (Dependents/Family Members)
+// ============================================================================
+// Represents a family member covered under an employee's insurance.
+// 
+// Key Points:
+// - Each member belongs to exactly one employee
+// - Relationship types: "SELF", "SPOUSE", "CHILD", "PARENT"
+// - "SELF" represents the employee themselves as a member
+// - Tracks who created the record (for audit purposes)
+// 
+// Business Rules:
+// - HR Managers can add/edit/delete any member
+// - Employees can add/edit their own dependents
+// - Employees CANNOT delete dependents (only HR can)
+// ============================================================================
+model Member {
+  // ========== Primary Key ==========
+  id           Int      @id @default(autoincrement())
+  
+  // ========== Personal Information ==========
+  firstName    String
+  lastName     String
+  dateOfBirth  DateTime?
+  gender       String?          // "Male", "Female", "Other"
+  
+  // ========== Relationship to Employee ==========
+  // Defines how this person is related to the employee
+  // Values: "SELF" (the employee), "SPOUSE", "CHILD", "PARENT"
+  relationship String
+  
+  // ========== Timestamps ==========
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // ========== Relations ==========
+  // The employee this member belongs to
+  employeeId   Int
+  employee     Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  // The user who created this member record (for audit trail)
+  // Could be HR Manager or the Employee themselves
+  createdById  Int?
+  createdBy    User?    @relation(fields: [createdById], references: [id])
+}

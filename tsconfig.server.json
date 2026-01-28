@@ -1,0 +1,36 @@
+{
+  /*
+   * ============================================================================
+   * SERVER-SPECIFIC TYPESCRIPT CONFIGURATION
+   * ============================================================================
+   * 
+   * This configuration extends the base tsconfig.json but overrides settings
+   * specifically for building the server-side code. The server runs in Node.js,
+   * so we need different output settings compared to the client (which uses Vite).
+   * 
+   * This file is used when running: npm run build:server
+   * ============================================================================
+   */
+  "extends": "./tsconfig.json",
+  
+  "compilerOptions": {
+    /* ========== Output Settings ========== */
+    // Enable output generation (we need actual JS files for the server)
+    "noEmit": false,
+    
+    // Output directory for compiled server code
+    "outDir": "./dist/server",
+    
+    // Use CommonJS modules for Node.js compatibility
+    "module": "NodeNext",
+    
+    // Use Node.js module resolution
+    "moduleResolution": "NodeNext"
+  },
+  
+  /* ========== Include Only Server Files ========== */
+  "include": [
+    "src/server/**/*",    // Server source files
+    "src/shared/**/*"     // Shared types and utilities
+  ]
+}
