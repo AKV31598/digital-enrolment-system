@@ -6,7 +6,7 @@ import { appRouter } from './routers/index.js';
 import { createContext } from './context.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // CORS - Must be BEFORE other middleware
 app.use(cors({
